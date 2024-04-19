@@ -1,15 +1,15 @@
 class Navio:
-    def __init__(self, tipo, saude_casco_atual, saude_velas_atual, carga_limite):
+    def __init__(self, tipo, saude_casco_atual, saude_velas_atual):
         self.tipo = tipo
-        self.saude_casco_atual = saude_casco_atual
-        self.saude_velas_atual = saude_velas_atual
-        self.carga_limite = carga_limite
-        self.ouro_armazenado = 0
-        self.carga = []
+        self.saude_casco_atual = int(saude_casco_atual)
+        self.saude_velas_atual = int(saude_velas_atual)
         dados = dados_navio[tipo]
         self.saude_max_casco = dados['saude_max_casco']
         self.saude_max_vela = dados['saude_max_vela']
         self.canhoes_por_lado = dados['canhoes_por_lado']
+        self.carga_max = dados['carga_max']
+        self.ouro_armazenado = 0
+        self.carga = {"Madeira": 0, "Aço": 0, "Pano": 0, "Rum": 0}
 
     def adicionar_item_carga(self, item, quantidade):
         if item == "Ouro":
@@ -18,24 +18,23 @@ class Navio:
         else:
             peso_item = {"Madeira": 2, "Aço": 4, "Pano": 1, "Rum": 3}.get(item, 0)
             peso_total = peso_item * quantidade
-            if len(self.carga) + peso_total <= self.carga_limite:
-                self.carga.extend([item] * quantidade)
+            carga_total = self.exibir_carga() + peso_total  # Calcula a carga total atual
+            if carga_total <= self.carga_max:  # Verifica se a carga total não excede a capacidade máxima
+                self.carga[item] += quantidade
                 return True
             else:
                 return False
 
     def exibir_carga(self):
-        carga_quantidade = {}
-        for item in self.carga:
-            carga_quantidade[item] = carga_quantidade.get(item, 0) + 1
-        return carga_quantidade
+        carga_total = sum(peso * {"Madeira": 2, "Aço": 4, "Pano": 1, "Rum": 3}.get(item, 0) for item, peso in self.carga.items())
+        return carga_total
 
     def exibir_info_navio(self):
-        carga_total = sum(peso for item, peso in {"Madeira": 2, "Aço": 4, "Pano": 1, "Rum": 3}.items() if item in self.carga)
+        carga_total = self.exibir_carga()
         return f"Tipo: {self.tipo}, Saúde do Casco: {self.saude_casco_atual} / {self.saude_max_casco}, " \
                f"Saúde das Velas: {self.saude_velas_atual} / {self.saude_max_vela}, " \
                f"Ouro Armazenado: {self.ouro_armazenado}, " \
-               f"Carga {carga_total} / {self.carga_limite}: {self.exibir_carga()}"
+               f"Carga {carga_total} / {self.carga_max}: {self.carga}"
 
 class Frota:
     def __init__(self):
@@ -51,15 +50,13 @@ class Frota:
         for i, navio in enumerate(self.navios, start=1):
             print(f"Navio {i}: {navio.exibir_info_navio()}")
 
-
 dados_navio = {
-    'Canhoneira': {'saude_max_casco': 450, 'saude_max_vela': 200, 'canhoes_por_lado': 2},
-    'Escuna': {'saude_max_casco': 900, 'saude_max_vela': 350, 'canhoes_por_lado': 6},
-    'Brigue': {'saude_max_casco': 1700, 'saude_max_vela': 950, 'canhoes_por_lado': 11},
-    'Fragata': {'saude_max_casco': 3800, 'saude_max_vela': 2100, 'canhoes_por_lado': 24},
-    'Galeão': {'saude_max_casco': 5600, 'saude_max_vela': 5000, 'canhoes_por_lado': 32}
+    'Canhoneira': {'saude_max_casco': 450, 'saude_max_vela': 200, 'canhoes_por_lado': 2, 'carga_max': 1200},
+    'Escuna': {'saude_max_casco': 900, 'saude_max_vela': 350, 'canhoes_por_lado': 6, 'carga_max': 2300},
+    'Brigue': {'saude_max_casco': 1700, 'saude_max_vela': 950, 'canhoes_por_lado': 11, 'carga_max': 3700},
+    'Fragata': {'saude_max_casco': 3800, 'saude_max_vela': 2100, 'canhoes_por_lado': 24, 'carga_max': 4600},
+    'Galeão': {'saude_max_casco': 5600, 'saude_max_vela': 5000, 'canhoes_por_lado': 32, 'carga_max': 6200}
 }
-
 
 def adicionar_navio():
     print("Escolha o tipo de navio:")
@@ -71,12 +68,10 @@ def adicionar_navio():
 
     saude_casco_atual = float(input(f"Informe a saúde do casco atual (0 - {dados_navio[tipo_navio]['saude_max_casco']}): "))
     saude_velas_atual = float(input(f"Informe a saúde das velas atual (0 - {dados_navio[tipo_navio]['saude_max_vela']}): "))
-    carga_limite = int(input("Informe a carga limite: "))
 
-    navio = Navio(tipo_navio, saude_casco_atual, saude_velas_atual, carga_limite)
+    navio = Navio(tipo_navio, saude_casco_atual, saude_velas_atual)
     frota.adicionar_navio(navio)
     print("Navio adicionado à frota com sucesso!")
-
 
 def adicionar_item_carga():
     print("Escolha o navio:")
@@ -126,11 +121,3 @@ while True:
         break
     else:
         print("Opção inválida. Por favor, escolha novamente.")
-
-    dados_navio = {
-        'Canhoneira': {'saude_max_casco': 450, 'saude_max_vela': 200, 'canhoes_por_lado': 2, 'carga_max': 1200},
-        'Escuna': {'saude_max_casco': 900, 'saude_max_vela': 350, 'canhoes_por_lado': 6, 'carga_max': 2300},
-        'Brigue': {'saude_max_casco': 1700, 'saude_max_vela': 950, 'canhoes_por_lado': 11, 'carga_max': 3700},
-        'Fragata': {'saude_max_casco': 3800, 'saude_max_vela': 2100, 'canhoes_por_lado': 24, 'carga_max': 4600},
-        'Galeão': {'saude_max_casco': 5600, 'saude_max_vela': 5000, 'canhoes_por_lado': 32, 'carga_max': 6200}
-    }
