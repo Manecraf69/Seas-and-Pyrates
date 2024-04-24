@@ -69,10 +69,6 @@ class Navio:
         for item, quantidade in self.carga.items():
             print(f"{item}: {quantidade}")
 
-def gerar_navio():
-    tipos_navio = ['Galeão', 'Fragata', 'Brigue', 'Escuna', 'Canhoneira']
-    return Navio("Navio do Jogador", random.choice(tipos_navio))
-
 def encontro_inimigo(navio):
     tipos_navio_inimigo = ['Galeão', 'Fragata', 'Brigue', 'Escuna', 'Canhoneira']
     tipo_navio_inimigo = random.choice(tipos_navio_inimigo)
@@ -268,7 +264,6 @@ def main():
                         print("Você não tem ouro suficiente para comprar este material.")
                 else:
                     print("Opção inválida!")
-
 
             elif opcaoAtracadoIlha == '3':
                 print("Materiais disponíveis para venda:")
