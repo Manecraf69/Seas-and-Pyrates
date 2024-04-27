@@ -57,10 +57,61 @@ def ResetarStatus():
     rodada = 0
     recarga_canhoes = 3
 
-def CausarDano():
-    global dano, canhoes_jogador, tripulacao_jogador, multiplicadorDeDano
-    dano = int(random.uniform(18, 20) * (min(canhoes_jogador, tripulacao_jogador) - 1) - multiplicadorDeDano)
-    return dano
+def AtacarCasco(valor_casco, valor_canhao_usado, valor_canhao_destruido, valor_tripulacao):
+    global recarga_canhoes, cidades_conhecidas, cidades_existentes
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+    if recarga_canhoes == 3:
+        dano = int(random.uniform(18, 20) * (min(valor_canhao_usado, valor_tripulacao) - 1) - multiplicadorDeDano)
+        if dano <= 0:
+            print("A distância entre os navios é muito grande para os canhões alcançarem!\n")
+        else:
+            valor_casco -= dano
+            print("Você atira no casco do navio inimigo causando", dano, "de dano!")
+            
+            return valor_casco
+            # chance = random.randint(1, 20)
+            # if chance == 7:
+            #     canhaoDestruido = int(random.uniform(0.1, 0.3) * (min(valor_canhao_usado, valor_tripulacao) - 1) - multiplicadorDeDano)
+            #     valor_canhao_destruido -= canhaoDestruido
+            #     print("\nPor sorte você consegue destruir", canhaoDestruido ,"canhão(ões) do inimigo no disparo!\n")
+
+        if valor_casco <= 0:
+            print("\nVocê derrotou o inimigo!\n")
+            ResetarStatus()
+
+        if casco_jogador <= 0:
+            if len(cidades_conhecidas) > 0:
+                print("\nVocê foi derrotado em batalha, respawnando em: " + random.choice(cidades_conhecidas)+"...")
+            else:
+                print("\nVocê foi derrotado em batalha, respawnando na cidade mais próxima: " + random.choice(cidades_existentes)+"...")
+                
+            ResetarStatus()
+            print("\nSeu navio foi reparado e está pronto para mais aventuras!\n")
+
+        recarga_canhoes = -1
+    else:
+        print("Canhões principais recarregando por mais", 3 - recarga_canhoes, "rodada(s)!")
+        rodada -= 1
+        recarga_canhoes -= 1
+
+def AtacarVelas(valor_vela, valor_canhao, valor_tripulacao):
+    global recarga_canhoes, rodada
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+    if valor_vela > 0:
+        dano = int(random.uniform(18, 20) * (min(valor_canhao, valor_tripulacao) - 1) - multiplicadorDeDano)
+        valor_vela -= dano
+        print("Você atira nas velas do navio inimigo causando", dano, "de dano!\n")
+        if valor_vela < 0:
+            valor_vela = 0
+            print("As velas foram completamente destruídas, o navio inimigo está incapaz de se mover")
+    else:
+        print("O navio inimigo já está sem velas!\n")
+        recarga_canhoes -= 1
+        rodada -= 1
+
+    return valor_vela
 
 os.system('cls' if os.name == 'nt' else 'clear')
 print("Bem vindo!\n")
@@ -77,11 +128,11 @@ while True:
 
         if evento <= 5: # Encontrar um navio
             os.system('cls' if os.name == 'nt' else 'clear')
-            navegacao = input("Você vê um navio no horizonte. O que você faz?\n"
-                "\n1. Atacar o navio"
-                "\n2. Analisar o navio"
-                "\n3. Se distanciar\n")
-            # navegacao = "1"
+            # navegacao = input("Você vê um navio no horizonte. O que você faz?\n"
+            #     "\n1. Atacar o navio"
+            #     "\n2. Analisar o navio"
+            #     "\n3. Se distanciar\n")
+            navegacao = "1"
             
             while True:
                 if navegacao == "1":
@@ -108,57 +159,10 @@ while True:
                         # --- Decisões do player --- #
 
                         if combate == "1":
-                            os.system('cls' if os.name == 'nt' else 'clear')
-
-                            if recarga_canhoes == 3:
-                                CausarDano()
-                                if dano <= 0:
-                                    print("A distância entre os navios é muito grande para os canhões alcançarem!\n")
-                                else:
-                                    casco_inimigo -= dano
-                                    print("Você atira no casco do navio inimigo causando", dano, "de dano!")
-
-                                    chance = random.randint(1, 20)
-                                    if chance == 7:
-                                        canhaoDestruido = int(random.uniform(0.1, 0.3) * canhoes_jogador)
-                                        canhoes_inimigo -= canhaoDestruido
-                                        print("\nPor sorte você consegue destruir", canhaoDestruido ,"canhão(ões) do inimigo no disparo!\n")
-
-                                if casco_inimigo <= 0:
-                                    print("\nVocê derrotou o inimigo!\n")
-                                    ResetarStatus()
-                                    break
-
-                                if casco_jogador <= 0:
-                                    if len(cidades_conhecidas) > 0:
-                                        print("\nVocê foi derrotado em batalha, respawnando em: " + random.choice(cidades_conhecidas)+"...")
-                                    else:
-                                        print("\nVocê foi derrotado em batalha, respawnando na cidade mais próxima: " + random.choice(cidades_existentes)+"...")
-                                        
-                                    ResetarStatus()
-                                    print("\nSeu navio foi reparado e está pronto para mais aventuras!\n")
-                                    break
-
-                                recarga_canhoes = -1
-                            else:
-                                print("Canhões principais recarregando por mais", 3 - recarga_canhoes, "rodada(s)!")
-                                rodada -= 1
-                                recarga_canhoes -= 1
+                            casco_inimigo = AtacarCasco(casco_inimigo, canhoes_jogador, canhoes_inimigo, tripulacao_jogador)
 
                         elif combate == "2":
-                            os.system('cls' if os.name == 'nt' else 'clear')
-
-                            if vela_inimigo > 0:
-                                CausarDano()
-                                vela_inimigo -= dano
-                                print("Você atira nas velas do navio inimigo causando", dano, "de dano!\n")
-                                if vela_inimigo < 0:
-                                    vela_inimigo = 0
-                                    print("As velas foram completamente destruídas, o navio inimigo está incapaz de se mover")
-                            else:
-                                print("O navio inimigo já está sem velas!\n")
-                                recarga_canhoes -= 1
-                                rodada -= 1
+                            vela_inimigo = AtacarVelas(vela_inimigo, canhoes_jogador, tripulacao_jogador)
 
                         elif combate == "3":
                             os.system('cls' if os.name == 'nt' else 'clear')
@@ -171,7 +175,7 @@ while True:
                                     tripulacao_inimigo = 0
 
                                 else:
-                                    tripulacao_inimigo -= dano
+                                    tripulacao_inimigo -= min(dano, conves_inimigo)
                                     print("Você atira com", min(mosquetes_jogador, conves_jogador), "mosquetes na tripulação inimiga matando", dano, "tripulantes!\n")
                             else:
                                 print("Sem mais tropas inimigas!\n")
