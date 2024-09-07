@@ -1,5 +1,5 @@
 import random
-import os # os.system('cls' if os.name == 'nt' else 'clear')
+import os # os.system('cls')
 
 nomes_navios_piratas = [
     "Vingança da Rainha Anne","Pérola Negra","Vingador","Fantasma","Vingança do Diabo","Dama do Mar","Tesouro Escondido","Trovão",
@@ -99,7 +99,7 @@ class Frota:
         return True
 
     def exibir_frota(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls')
         for i, navio in enumerate(self.navios, start=1):
             print(f"Navio {i}: {navio.exibir_info_navio()}")
 
@@ -180,7 +180,7 @@ while True:
         frota.exibir_frota()
 
     elif escolhaPrincipal == "4":
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls')
         opcaoAtracadoIlha = input("Atracando em uma ilha...\n"
             "\nOpções:\n"
             "1. Realizar reparos no navio por ouro\n"
@@ -191,7 +191,7 @@ while True:
             "\nO que você gostaria de fazer?\n")
         
         if opcaoAtracadoIlha == '4':
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system('cls')
             print("Opções de navios disponíveis para compra:\n"
                 "1. Escuna - 700 ouro\n"
                 "2. Brigue - 1500 ouro\n"

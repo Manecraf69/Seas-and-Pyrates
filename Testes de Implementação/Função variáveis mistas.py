@@ -8,7 +8,7 @@ canhoes_jogador = 12
 tripulacao_jogador = 35
 
 def Combate(valorVela):
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system('cls')
 
     if valorVela > 0:
         dano = int(random.uniform(18, 20) * (min(canhoes_jogador, tripulacao_jogador) - 1))

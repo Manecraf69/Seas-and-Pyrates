@@ -1,5 +1,5 @@
 import random
-import os # os.system('cls' if os.name == 'nt' else 'clear')
+import os # os.system('cls')
 import math
 
 cidades_existentes = [
@@ -248,7 +248,7 @@ def JogadorDerrotado():
     
     print("\nSeu navio foi reparado e está pronto para mais aventuras!\n")
 
-os.system('cls' if os.name == 'nt' else 'clear')
+os.system('cls')
 print("Bem vindo!\n")
 
 while True:
@@ -262,7 +262,7 @@ while True:
         evento = 5
 
         if evento <= 5: # Encontrar um navio
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system('cls')
             # navegacao = input("Você vê um navio no horizonte. O que você faz?\n"
             # "\n1. Atacar o navio"
             # "\n2. Analisar o navio"
@@ -272,7 +272,7 @@ while True:
             
             while True:
                 if navegacao == "1":
-                    os.system('cls' if os.name == 'nt' else 'clear')
+                    os.system('cls')
                     MostrarRodadaDistancia()
                     
                     while combate != "Encerrar":
@@ -296,25 +296,25 @@ while True:
                         # --- Decisões do player --- #
 
                         if combate == "1":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
                             casco_inimigo, canhoes_casco_inimigo, recarga_canhoes_casco_jogador, tripulacao_inimigo, quebrar = AtacarCasco("jogador", casco_inimigo, recarga_canhoes_casco_jogador, canhoes_casco_jogador, canhoes_casco_inimigo, tripulacao_jogador, tripulacao_inimigo)
 
                         elif combate == "2":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
                             vela_inimigo, recarga_canhoes_vela_jogador = AtacarVelas("jogador", recarga_canhoes_vela_jogador, vela_inimigo, canhoes_vela_jogador, tripulacao_jogador)
 
                         elif combate == "3":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
                             tripulacao_inimigo, conves_inimigo, quebrar = AtacarTripulacao("jogador", tripulacao_inimigo, mosquetes_jogador, conves_jogador, conves_inimigo)
                                 
                         elif combate == "4":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
 
                         elif combate == "5":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
 
                         elif combate == "6":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
                                 
                             if distanciaEntreNavios > 0 and velocidadeNavioJogador > 0:
                                 distanciaEntreNavios -= 50
@@ -323,7 +323,7 @@ while True:
                                 print("Vocês já estão colados um ao outro!\n")
 
                         elif combate == "7":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
 
                             if distanciaEntreNavios < 350 and velocidadeNavioJogador > 0:
                                 distanciaEntreNavios += 50
@@ -332,7 +332,7 @@ while True:
                                 print("Vocês já estão muito longe um do outro!\n")
 
                         elif combate == "8":
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
                         
                             if velocidadeNavioJogador * 0.8 > velocidadeNavioInimigo or rodada == 0 or tripulacao_inimigo == 0 and velocidadeNavioJogador > 0:
                                 print("Você conseguiu fugir com sucesso!\n")
@@ -346,7 +346,7 @@ while True:
                                 print("Você tenta fugir, mas o inimigo é mais rápido!\n")
 
                         else:
-                            os.system('cls' if os.name == 'nt' else 'clear')
+                            os.system('cls')
 
                         if quebrar == 1:
                             break
@@ -379,26 +379,26 @@ while True:
                     break
 
                 elif navegacao == "2":
-                    os.system('cls' if os.name == 'nt' else 'clear')
+                    os.system('cls')
                     MostrarStatusInimigo()
                     
                     escolhaNavegacao = input("\nDeseja atacar? (1. Sim / 2. Não)")
                     if escolhaNavegacao == "1":
                         navegacao = "1"
                     elif escolhaNavegacao == "2":
-                        os.system('cls' if os.name == 'nt' else 'clear')
+                        os.system('cls')
                         break
 
                 elif navegacao == "3":
-                    os.system('cls' if os.name == 'nt' else 'clear')
+                    os.system('cls')
                     pass
 
         elif evento <= 7: # Encontrar pilhagem
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system('cls')
             print("Você encontrou uma pilhagem flutuando na água!\n")
 
         elif evento == 8: # Encontrar cidade
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system('cls')
 
             if len(cidades_existentes) > 0:
                 cidadeEncontrada = random.choice(cidades_existentes)
@@ -410,13 +410,13 @@ while True:
                 print("Você passou por " + random.choice(cidades_conhecidas) + "!\n")
 
         else:
-            os.system('cls' if os.name == 'nt' else 'clear')
+            os.system('cls')
             print("Você viajou tranquilo\n")
 
     elif escolha == "2": # Tem que juntar os códigos (CódigoPrincipal.py, SistemaDeFrota.py e SistemaDeBatalha.py)
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls')
         print("Sem código\n")
 
     else:
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls')
         pass
