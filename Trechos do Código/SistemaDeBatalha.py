@@ -1,4 +1,4 @@
-import random
+﻿import random
 import os # os.system('cls')
 import math
 
@@ -283,14 +283,14 @@ while True:
                         print("")
                         MostrarStatusInimigo()
                         print("\nDigite o que deseja fazer: \n"
-                                        "\n1. Atirar no casco (", min(3, recarga_canhoes_casco_jogador), "/ 3 )"
-                                        "\n2. Atirar nas velas (", min(4, recarga_canhoes_vela_jogador), "/ 4 )"
-                                        "\n3. Atirar na tripulação"
-                                        "\n4. Abalroar"
-                                        "\n5. Abordar"
-                                        "\n6. Se aproximar"
-                                        "\n7. Se afastar"
-                                        "\n8. Fugir")
+                                "\n1. Atirar no casco (", min(3, recarga_canhoes_casco_jogador), "/ 3 )"
+                                "\n2. Atirar nas velas (", min(4, recarga_canhoes_vela_jogador), "/ 4 )"
+                                "\n3. Atirar na tripulação"
+                                "\n4. Abalroar"
+                                "\n5. Abordar"
+                                "\n6. Se aproximar"
+                                "\n7. Se afastar"
+                                "\n8. Fugir")
                         combate = input("")
                         
                         # --- Decisões do player --- #

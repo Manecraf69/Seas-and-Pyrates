@@ -1,0 +1,83 @@
+{
+  "frota": {
+    "navios": [
+      {
+        "tipo": "Galeao",
+        "saude_casco_atual": 5600,
+        "saude_velas_atual": 5000,
+        "tripulacao_atual": 180,
+        "carga": {
+          "Madeira": 100,
+          "Aco": 142,
+          "Pano": 48,
+          "Rum": 140,
+          "Ouro": 1167
+        }
+      },
+      {
+        "tipo": "Canhoneira",
+        "saude_casco_atual": 450,
+        "saude_velas_atual": 200,
+        "tripulacao_atual": 18,
+        "carga": {
+          "Madeira": 0,
+          "Aco": 0,
+          "Pano": 97,
+          "Rum": 0,
+          "Ouro": 5167
+        }
+      },
+      {
+        "tipo": "Canhoneira",
+        "saude_casco_atual": 450,
+        "saude_velas_atual": 200,
+        "tripulacao_atual": 18,
+        "carga": {
+          "Madeira": 413,
+          "Aco": 83,
+          "Pano": 34,
+          "Rum": 1,
+          "Ouro": 0
+        }
+      }
+    ],
+    "qnt_itens": {
+      "Madeira": 513,
+      "Aco": 225,
+      "Pano": 179,
+      "Rum": 141,
+      "Ouro": 6334
+    },
+    "carga_total_frota": 2528,
+    "carga_max_frota": 8600
+  },
+  "cidades_existentes": [
+    "Port Royal",
+    "Nassau",
+    "Tortuga",
+    "Kingston",
+    "New Providence",
+    "Barbados",
+    "St. Augustine",
+    "Charles Town",
+    "Belize City",
+    "Havana",
+    "Campeche",
+    "Maracaibo",
+    "Panama City",
+    "Veracruz",
+    "Portobelo",
+    "La Tortuga",
+    "Santo Domingo",
+    "St. Kitts",
+    "St. Thomas",
+    "Galveston"
+  ],
+  "cidades_conhecidas": [
+    "Saint-Malo",
+    "Cartagena",
+    "Bridgetown",
+    "Porto Principe",
+    "Porto Bello"
+  ]
+}
