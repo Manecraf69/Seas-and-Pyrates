@@ -1,15 +1,136 @@
-import os
+﻿import os
 import random
 import json
 
-ITENS = ["Madeira", "Aco", "Pano", "Rum", "Ouro"]
-PESO_ITENS = {"Madeira": 2, "Aco": 4, "Pano": 1, "Rum": 3, "Ouro": 0}
+MAPA_TESOURO = "Mapa do Tesouro"
+ITENS_BASICOS = ["Madeira", "Aco", "Pano", "Rum", "Ouro"]
+ITENS_COMERCIAIS = ["Madeira", "Aco", "Pano", "Rum"]
+ITENS = ITENS_BASICOS + [MAPA_TESOURO]
+PESO_ITENS = {"Madeira": 2, "Aco": 4, "Pano": 1, "Rum": 3, "Ouro": 0, MAPA_TESOURO: 0}
 PRECO_MATERIAIS = {"Madeira": 4, "Aco": 10, "Pano": 6, "Rum": 8}
+PRECO_ESPECIAIS = {MAPA_TESOURO: 280}
 PRECO_NAVIOS = {"Escuna": 700, "Brigue": 1500, "Fragata": 2400, "Galeao": 3600}
 PRECO_TRIPULANTE = 12
 TRIPULACAO_BASE = {"Canhoneira": 18, "Escuna": 35, "Brigue": 60, "Fragata": 120, "Galeao": 180}
 SAVE_FILE = "savegame.json"
-ITENS_SAQUE = ["Madeira", "Aco", "Pano", "Rum"]
+ITENS_SAQUE = ITENS
+
+FAIXA_RECOMPENSA_MAPA_TESOURO = {
+    3: (200, 300),
+    4: (300, 400),
+    5: (400, 500),
+}
+
+CHARADAS_MAPA_TESOURO = [
+    {
+        "pergunta": "O que cai em pe e corre deitado?",
+        "alternativas": ["Chuva", "Vento", "Neve", "Nevoa"],
+        "resposta": "Chuva",
+        "dicas": [
+            "Tem a ver com o clima.",
+            "Vem do ceu e molha tudo.",
+        ],
+    },
+    {
+        "pergunta": "Quanto mais se tira, maior fica. O que e?",
+        "alternativas": ["Buraco", "Morro", "Mar", "Bau"],
+        "resposta": "Buraco",
+        "dicas": [
+            "Nao e algo que voce carrega.",
+            "E uma ausencia que cresce.",
+        ],
+    },
+    {
+        "pergunta": "Sou o dinheiro do capitao e nao peso na carga. Quem sou eu?",
+        "alternativas": ["Ouro", "Rum", "Aco", "Pano"],
+        "resposta": "Ouro",
+        "dicas": [
+            "Compra quase tudo.",
+            "Vale mais que madeira e pano.",
+        ],
+    },
+    {
+        "pergunta": "Quando eu quebro, o navio perde velocidade. O que sou?",
+        "alternativas": ["Velas", "Casco", "Canhoes", "Bussola"],
+        "resposta": "Velas",
+        "dicas": [
+            "Dependo do vento.",
+            "Sem mim fugir fica mais dificil.",
+        ],
+    },
+    {
+        "pergunta": "Quem faz o navio obedecer e os canhoes falarem?",
+        "alternativas": ["Tripulacao", "Rum", "Aco", "Porto"],
+        "resposta": "Tripulacao",
+        "dicas": [
+            "Nao sou objeto.",
+            "Sem mim o combate enfraquece.",
+        ],
+    },
+    {
+        "pergunta": "Qual material e melhor para remendar o casco?",
+        "alternativas": ["Aco", "Pano", "Rum", "Ouro"],
+        "resposta": "Aco",
+        "dicas": [
+            "E duro como ferro.",
+            "Ajuda mais no casco do que no mastro.",
+        ],
+    },
+    {
+        "pergunta": "Qual item raro abre a busca pelo bau?",
+        "alternativas": ["Mapa do Tesouro", "Rum", "Aco", "Pano"],
+        "resposta": "Mapa do Tesouro",
+        "dicas": [
+            "Ele aparece de vez em quando no porto.",
+            "Sem ele a caca nao comeca.",
+        ],
+    },
+    {
+        "pergunta": "Onde o capitao atraca para comprar, vender e contratar?",
+        "alternativas": ["Porto", "Ilha", "Naufragio", "Conves"],
+        "resposta": "Porto",
+        "dicas": [
+            "E um lugar de parada.",
+            "Ali o negocio acontece.",
+        ],
+    },
+    {
+        "pergunta": "Qual parte do navio apanha primeiro quando os canhoes cantam?",
+        "alternativas": ["Casco", "Velas", "Tripulacao", "Ouro"],
+        "resposta": "Casco",
+        "dicas": [
+            "E a resistencia principal.",
+            "Fica na parte de baixo do navio.",
+        ],
+    },
+    {
+        "pergunta": "O que aponta o rumo mas nao leva o navio?",
+        "alternativas": ["Bussola", "Mapa", "Rum", "Aco"],
+        "resposta": "Bussola",
+        "dicas": [
+            "Ela ajuda a nao se perder.",
+            "Mostra a direcao do caminho.",
+        ],
+    },
+    {
+        "pergunta": "Qual material sai das arvores e ajuda em reparos simples?",
+        "alternativas": ["Madeira", "Pano", "Rum", "Ouro"],
+        "resposta": "Madeira",
+        "dicas": [
+            "E vegetal.",
+            "Serve para consertos rapidos.",
+        ],
+    },
+    {
+        "pergunta": "Qual bebida anima a tripulacao e tambem pode ser vendida?",
+        "alternativas": ["Rum", "Pano", "Aco", "Mapa do Tesouro"],
+        "resposta": "Rum",
+        "dicas": [
+            "Tem fama de pirata.",
+            "E boa no brinde, nao na batalha.",
+        ],
+    },
+]
 
 cidades_existentes = [
     "Port Royal", "Nassau", "Tortuga", "Kingston", "New Providence", "Barbados", "St. Augustine",
@@ -17,6 +138,7 @@ cidades_existentes = [
     "Bridgetown", "Veracruz", "Porto Bello", "Cartagena", "Portobelo", "La Tortuga", "Santo Domingo",
     "St. Kitts", "St. Thomas", "Saint-Malo", "Galveston"
 ]
+
 cidades_conhecidas = []
 
 dados_navio = {
@@ -27,6 +149,23 @@ dados_navio = {
     "Galeao": {"saude_max_casco": 5600, "saude_max_vela": 5000, "canhoes_por_lado": 32, "carga_max": 6200},
 }
 
+ANSI_RED = "\033[91m"
+ANSI_RESET = "\033[0m"
+
+def colorir_valor(texto, destaque):
+    valor = str(texto)
+    return f"{ANSI_RED}{valor}{ANSI_RESET}" if destaque else valor
+
+def marcar_destacar(estado, campos):
+    for campo in campos:
+        chave = f"destacar_{campo}"
+        if chave in estado:
+            estado[chave] = True
+
+def limpar_destacar_estado(estado):
+    for chave in list(estado.keys()):
+        if chave.startswith("destacar_"):
+            estado[chave] = False
 
 class Navio:
     def __init__(self, tipo, saude_casco_atual, saude_velas_atual, tripulacao_atual=None):
@@ -148,19 +287,23 @@ class Frota:
 
         for i, navio in enumerate(self.navios, start=1):
             tripulacao = navio.tripulacao_atual
+            tripulacao_max = navio.tripulacao_max
             conves = max(1, int(tripulacao * 0.4)) if tripulacao > 0 else 0
+            conves_max = max(1, int(tripulacao_max * 0.4)) if tripulacao_max > 0 else 0
             canhoes_casco = navio.canhoes_por_lado * 2
             canhoes_vela = max(1, navio.canhoes_por_lado // 2)
-            velocidade = (navio.saude_velas_atual / max(1, navio.saude_max_vela)) * 12
+            estado_vela = {"vela": navio.saude_velas_atual, "vela_max": navio.saude_max_vela}
+            velocidade = velocidade_navio(estado_vela)
+            velocidade_max = velocidade_navio({"vela": navio.saude_max_vela, "vela_max": navio.saude_max_vela})
             print(
                 f"--- Navio Jogador {i} ---"
                 f"\nTipo de navio: {navio.tipo}"
-                f"\nVida do casco: {navio.saude_casco_atual}"
-                f"\nVida das velas: {navio.saude_velas_atual}"
+                f"\nVida do casco: {navio.saude_casco_atual}/{navio.saude_max_casco}"
+                f"\nVida das velas: {navio.saude_velas_atual}/{navio.saude_max_vela}"
                 f"\nCanhoes primarios: {canhoes_casco}"
                 f"\nCanhoes secundarios: {canhoes_vela}"
-                f"\nTripulacao total: {tripulacao} ( No conves: {conves} )"
-                f"\nVelocidade maxima (nos): {velocidade:.2f}"
+                f"\nTripulacao total: {tripulacao}/{tripulacao_max} ( No conves: {conves}/{conves_max} )"
+                f"\nVelocidade (nos): {velocidade:.2f}/{velocidade_max:.2f}"
                 f"\nItens no navio: {navio.carga}\n"
             )
 
@@ -250,6 +393,11 @@ def limpar_tela():
     os.system("cls" if os.name == "nt" else "clear")
 
 
+def pausar_e_limpar(mensagem="\nPressione Enter para continuar..."):
+    input(mensagem)
+    limpar_tela()
+
+
 def ler_int(pergunta, minimo=None, maximo=None):
     while True:
         try:
@@ -263,6 +411,96 @@ def ler_int(pergunta, minimo=None, maximo=None):
             return valor
         except ValueError:
             print("Digite um numero valido.")
+
+
+def obter_preco_compra_item(item):
+    return PRECO_MATERIAIS.get(item, PRECO_ESPECIAIS.get(item))
+
+
+def obter_preco_venda_item(item):
+    if item == "Ouro":
+        return 1
+
+    preco_compra = obter_preco_compra_item(item)
+    if preco_compra is None:
+        return 0
+    return max(1, preco_compra // 2)
+
+
+def gerar_itens_porto():
+    itens = list(ITENS_COMERCIAIS)
+    if random.random() < 0.20:
+        itens.append(MAPA_TESOURO)
+    random.shuffle(itens)
+    return itens
+
+
+def gerar_desafio_mapa_tesouro():
+    quantidade_etapas = random.choices([3, 4, 5], weights=[45, 35, 20], k=1)[0]
+    faixa = FAIXA_RECOMPENSA_MAPA_TESOURO[quantidade_etapas]
+    etapas_base = random.sample(CHARADAS_MAPA_TESOURO, quantidade_etapas)
+
+    etapas = []
+    for etapa_base in etapas_base:
+        alternativas = list(etapa_base["alternativas"])
+        random.shuffle(alternativas)
+        etapas.append(
+            {
+                "pergunta": etapa_base["pergunta"],
+                "alternativas": alternativas,
+                "resposta": etapa_base["resposta"],
+                "dicas": list(etapa_base.get("dicas", [])),
+            }
+        )
+
+    return {
+        "quantidade_etapas": quantidade_etapas,
+        "faixa_recompensa": faixa,
+        "recompensa_final": random.randint(faixa[0], faixa[1]),
+        "etapas": etapas,
+    }
+
+
+def mostrar_etapa_mapa_tesouro(indice_etapa, total_etapas, etapa, faixa_recompensa, dicas_visiveis):
+    limpar_tela()
+    print(f"Mapa do Tesouro | Etapa {indice_etapa}/{total_etapas}")
+    print(f"Recompensa final prevista: {faixa_recompensa[0]} a {faixa_recompensa[1]} ouro")
+    print(f"\n{etapa['pergunta']}")
+
+    if dicas_visiveis > 0 and etapa["dicas"]:
+        print("\nDicas:")
+        for dica in etapa["dicas"][:dicas_visiveis]:
+            print(f"- {dica}")
+
+    print("\nAlternativas:")
+    for i, opcao in enumerate(etapa["alternativas"], start=1):
+        print(f"{i}. {opcao}")
+    print("0. Guardar o mapa e parar por enquanto")
+
+
+def resolver_etapa_mapa_tesouro(indice_etapa, total_etapas, etapa, faixa_recompensa):
+    dicas_visiveis = 1 if etapa["dicas"] else 0
+
+    while True:
+        mostrar_etapa_mapa_tesouro(indice_etapa, total_etapas, etapa, faixa_recompensa, dicas_visiveis)
+        escolha = ler_int("Escolha: ", 0, len(etapa["alternativas"]))
+
+        if escolha == 0:
+            print("Voce fecha o mapa e guarda as anotações.")
+            pausar_e_limpar("\nPressione Enter para voltar ao menu...")
+            return False
+
+        resposta = etapa["alternativas"][escolha - 1]
+        if resposta == etapa["resposta"]:
+            print(f"Resposta certa. Etapa {indice_etapa}/{total_etapas} concluida.")
+            pausar_e_limpar("\nPressione Enter para seguir para a proxima etapa...")
+            return True
+
+        if dicas_visiveis < len(etapa["dicas"]):
+            dicas_visiveis += 1
+
+        print(f"Ainda nao. Etapa {indice_etapa}/{total_etapas} continua ativa.")
+        pausar_e_limpar("\nPressione Enter para tentar de novo...")
 
 
 def escolher_navio(frota, permitir_cancelar=False):
@@ -315,12 +553,9 @@ def vender_carga_navio(frota, navio):
         if qtd <= 0:
             continue
 
-        if item in PRECO_MATERIAIS:
-            preco_unit = PRECO_MATERIAIS[item] // 2
-        elif item == "Ouro":
-            preco_unit = 1
-        else:
-            preco_unit = 0
+        preco_unit = obter_preco_venda_item(item)
+        if preco_unit <= 0:
+            continue
 
         ouro_ganho += qtd * preco_unit
         frota.qnt_itens[item] = max(0, frota.qnt_itens[item] - qtd)
@@ -371,6 +606,8 @@ def gerar_navio_inimigo(tipo):
         dados_navio[tipo]["saude_max_vela"],
     )
     for item in ITENS_SAQUE:
+        if item == MAPA_TESOURO:
+            continue
         livre_peso = navio.carga_max - navio.exibir_carga()
         if livre_peso <= 0:
             break
@@ -381,6 +618,9 @@ def gerar_navio_inimigo(tipo):
         qtd = random.randint(0, max_qtd)
         if qtd > 0:
             navio.adicionar_item_carga(item, qtd)
+
+    if random.random() < 0.20:
+        navio.adicionar_item_carga(MAPA_TESOURO, 1)
     return navio
 
 
@@ -505,37 +745,67 @@ def criar_estado_combate(navio):
         "canhoes_casco": navio.canhoes_por_lado * 2,
         "canhoes_vela": max(1, navio.canhoes_por_lado // 2),
         "tripulacao": trip,
+        "tripulacao_max": navio.tripulacao_max,
         "conves": max(1, int(trip * 0.4)) if trip > 0 else 0,
+        "conves_max": max(1, int(navio.tripulacao_max * 0.4)) if navio.tripulacao_max > 0 else 0,
         "mosquetes": max(1, int(trip * 0.45)) if trip > 0 else 0,
         "recarga_casco": 3,
         "recarga_vela": 4,
         "recarga_mosquete": 2,
+        "destacar_casco": False,
+        "destacar_vela": False,
+        "destacar_tripulacao": False,
+        "destacar_canhao": False,
         "carga": navio.carga.copy(),
     }
 
 
 def mostrar_status_batalha(jogador, inimigo, rodada, distancia):
-    print(f"\nRodada: {rodada} | Distancia: {distancia} m")
+    print(f"\nRodada: {rodada} | Distancia: {distancia} m\n")
+    velocidade_jogador = velocidade_navio(jogador)
+    velocidade_jogador_max = velocidade_navio({"vela": jogador["vela_max"], "vela_max": jogador["vela_max"]})
+    velocidade_inimigo = velocidade_navio(inimigo)
+    velocidade_inimigo_max = velocidade_navio({"vela": inimigo["vela_max"], "vela_max": inimigo["vela_max"]})
+
+    casco_jogador = colorir_valor(f"{jogador['casco']}/{jogador['casco_max']}", jogador["destacar_casco"])
+    velas_jogador = colorir_valor(f"{jogador['vela']}/{jogador['vela_max']}", jogador["destacar_vela"])
+    trip_jogador = colorir_valor(f"{jogador['tripulacao']}/{jogador['tripulacao_max']}", jogador["destacar_tripulacao"])
+    conves_jogador = colorir_valor(f"{jogador['conves']}/{jogador['conves_max']}", jogador["destacar_tripulacao"])
+    canhoes_jogador = colorir_valor(jogador["canhoes_casco"], jogador["destacar_canhao"])
+    canhoes_lat_jogador = colorir_valor(jogador["canhoes_vela"], jogador["destacar_canhao"])
+    velocidade_jogador_texto = colorir_valor(f"{velocidade_jogador:.2f}/{velocidade_jogador_max:.2f}", jogador["destacar_vela"])
+
+    casco_inimigo = colorir_valor(f"{inimigo['casco']}/{inimigo['casco_max']}", inimigo["destacar_casco"])
+    velas_inimigo = colorir_valor(f"{inimigo['vela']}/{inimigo['vela_max']}", inimigo["destacar_vela"])
+    trip_inimigo = colorir_valor(f"{inimigo['tripulacao']}/{inimigo['tripulacao_max']}", inimigo["destacar_tripulacao"])
+    conves_inimigo = colorir_valor(f"{inimigo['conves']}/{inimigo['conves_max']}", inimigo["destacar_tripulacao"])
+    canhoes_inimigo = colorir_valor(inimigo["canhoes_casco"], inimigo["destacar_canhao"])
+    canhoes_lat_inimigo = colorir_valor(inimigo["canhoes_vela"], inimigo["destacar_canhao"])
+    velocidade_inimigo_texto = colorir_valor(f"{velocidade_inimigo:.2f}/{velocidade_inimigo_max:.2f}", inimigo["destacar_vela"])
+
     print(
         "--- Navio Jogador ---"
         f"\nTipo de navio: {jogador['tipo']}"
-        f"\nVida do casco: {jogador['casco']}"
-        f"\nVida das velas: {jogador['vela']}"
-        f"\nCanhoes primarios: {jogador['canhoes_casco']}"
-        f"\nCanhoes secundarios: {jogador['canhoes_vela']}"
-        f"\nTripulacao total: {jogador['tripulacao']} ( No conves: {jogador['conves']} )"
-        f"\nVelocidade maxima (nos): {velocidade_navio(jogador):.2f}"
+        f"\nVida do casco: {casco_jogador}"
+        f"\nVida das velas: {velas_jogador}"
+        f"\nCanhoes primarios: {canhoes_jogador}"
+        f"\nCanhoes secundarios: {canhoes_lat_jogador}"
+        f"\nTripulacao total: {trip_jogador} ( No conves: {conves_jogador} )"
+        f"\nVelocidade (nos): {velocidade_jogador_texto}\n"
     )
     print(
         "--- Navio Inimigo ---"
         f"\nTipo de navio: {inimigo['tipo']}"
-        f"\nVida do casco: {inimigo['casco']}"
-        f"\nVida das velas: {inimigo['vela']}"
-        f"\nCanhoes principais: {inimigo['canhoes_casco']}"
-        f"\nCanhoes secundarios: {inimigo['canhoes_vela']}"
-        f"\nTripulacao total: {inimigo['tripulacao']} ( No conves: {inimigo['conves']} )"
-        f"\nVelocidade maxima (nos): {velocidade_navio(inimigo):.2f}"
+        f"\nVida do casco: {casco_inimigo}"
+        f"\nVida das velas: {velas_inimigo}"
+        f"\nCanhoes principais: {canhoes_inimigo}"
+        f"\nCanhoes secundarios: {canhoes_lat_inimigo}"
+        f"\nTripulacao total: {trip_inimigo} ( No conves: {conves_inimigo} )"
+        f"\nVelocidade (nos): {velocidade_inimigo_texto}"
     )
+
+    limpar_destacar_estado(jogador)
+    limpar_destacar_estado(inimigo)
 
 
 def recarregar(estado, ignorar=None):
@@ -549,10 +819,10 @@ def recarregar(estado, ignorar=None):
 def atacar_casco(atacante, defensor, distancia, nome):
     if atacante["recarga_casco"] < 3:
         print(f"{nome}: canhoes de casco recarregando ({atacante['recarga_casco']}/3).")
-        return False
+        return None
     if distancia >= 300:
         print("Distancia muito grande para atingir casco.")
-        return False
+        return None
 
     disparos = min(atacante["canhoes_casco"], atacante["tripulacao"])
     dano = 0
@@ -563,12 +833,14 @@ def atacar_casco(atacante, defensor, distancia, nome):
     atacante["recarga_casco"] = 0
     print(f"{nome} causou {dano} de dano no casco.")
 
+    perdas_canhao = 0
     if defensor["canhoes_casco"] > 0:
         perdas_canhao = sum(1 for _ in range(disparos) if random.random() <= 0.03)
         defensor["canhoes_casco"] = max(0, defensor["canhoes_casco"] - perdas_canhao)
         if perdas_canhao > 0:
             print(f"{nome} destruiu {perdas_canhao} canhao(oes) inimigo(s).")
 
+    perdas_trip = 0
     if defensor["tripulacao"] > 0:
         perdas_trip = sum(1 for _ in range(disparos) if random.random() <= 0.03)
         defensor["tripulacao"] = max(0, defensor["tripulacao"] - perdas_trip)
@@ -576,19 +848,19 @@ def atacar_casco(atacante, defensor, distancia, nome):
         if perdas_trip > 0:
             print(f"{nome} matou {perdas_trip} tripulante(s).")
 
-    return True
+    return {"dano": dano, "perdas_canhao": perdas_canhao, "perdas_tripulacao": perdas_trip}
 
 
 def atacar_velas(atacante, defensor, distancia, nome):
     if atacante["recarga_vela"] < 4:
         print(f"{nome}: canhoes de velas recarregando ({atacante['recarga_vela']}/4).")
-        return False
+        return None
     if distancia >= 250:
         print("Distancia muito grande para atingir velas.")
-        return False
+        return None
     if defensor["vela"] <= 0:
         print("As velas alvo ja estao destruidas.")
-        return False
+        return None
 
     disparos = min(atacante["canhoes_vela"], atacante["tripulacao"])
     dano = 0
@@ -602,19 +874,19 @@ def atacar_velas(atacante, defensor, distancia, nome):
     if defensor["vela"] == 0:
         print("As velas foram totalmente destruidas.")
 
-    return True
+    return {"dano": dano}
 
 
 def atacar_tripulacao(atacante, defensor, distancia, nome):
     if atacante["recarga_mosquete"] < 2:
         print(f"{nome}: mosquetes recarregando ({atacante['recarga_mosquete']}/2).")
-        return False
+        return None
     if distancia >= 150:
         print("Distancia muito grande para ataque na tripulacao.")
-        return False
+        return None
     if defensor["tripulacao"] <= 0:
         print("Nao ha tripulacao inimiga restante.")
-        return False
+        return None
 
     tiros = min(atacante["mosquetes"], atacante["conves"])
     dano = 0
@@ -626,7 +898,7 @@ def atacar_tripulacao(atacante, defensor, distancia, nome):
     atacante["recarga_mosquete"] = 0
 
     print(f"{nome} eliminou {dano} da tripulacao inimiga.")
-    return True
+    return {"dano": dano}
 
 
 def turno_inimigo(inimigo, jogador, distancia):
@@ -634,23 +906,54 @@ def turno_inimigo(inimigo, jogador, distancia):
     if inimigo["tripulacao"] <= 0 or inimigo["casco"] <= 0:
         return distancia
 
+    acoes_possiveis = []
     if inimigo["recarga_casco"] >= 3 and distancia < 300:
-        atacar_casco(inimigo, jogador, distancia, "Inimigo")
-    elif inimigo["recarga_vela"] >= 4 and distancia < 250 and jogador["vela"] > 0:
-        atacar_velas(inimigo, jogador, distancia, "Inimigo")
-    elif inimigo["recarga_mosquete"] >= 2 and distancia < 150:
-        atacar_tripulacao(inimigo, jogador, distancia, "Inimigo")
-    else:
-        vel_inimigo = velocidade_navio(inimigo)
-        vel_jogador = velocidade_navio(jogador)
-        if distancia > 100 and vel_inimigo >= vel_jogador and vel_inimigo > 0:
-            distancia = max(0, distancia - 50)
-            print("Inimigo se aproximou.")
-        elif distancia < 300 and vel_inimigo < vel_jogador and vel_inimigo > 0:
-            distancia = min(350, distancia + 50)
-            print("Inimigo se afastou.")
+        acoes_possiveis.append("casco")
+    if inimigo["recarga_vela"] >= 4 and distancia < 250 and jogador["vela"] > 0:
+        acoes_possiveis.append("vela")
+    if inimigo["recarga_mosquete"] >= 2 and distancia < 150 and jogador["tripulacao"] > 0:
+        acoes_possiveis.append("tripulacao")
+
+    if acoes_possiveis:
+        acao_escolhida = random.choice(acoes_possiveis)
+        resultado = None
+        if acao_escolhida == "casco":
+            resultado = atacar_casco(inimigo, jogador, distancia, "Inimigo")
+            if resultado and resultado.get("dano", 0) > 0:
+                marcar_destacar(jogador, ["casco"])
+            if resultado and resultado.get("perdas_canhao", 0) > 0:
+                marcar_destacar(jogador, ["canhoes"])
+            if resultado and resultado.get("perdas_tripulacao", 0) > 0:
+                marcar_destacar(jogador, ["tripulacao"])
+        elif acao_escolhida == "vela":
+            resultado = atacar_velas(inimigo, jogador, distancia, "Inimigo")
+            if resultado and resultado.get("dano", 0) > 0:
+                marcar_destacar(jogador, ["vela"])
         else:
-            print("Inimigo manteve a posicao.")
+            resultado = atacar_tripulacao(inimigo, jogador, distancia, "Inimigo")
+            if resultado and resultado.get("dano", 0) > 0:
+                marcar_destacar(jogador, ["tripulacao"])
+        return distancia
+
+    vel_inimigo = velocidade_navio(inimigo)
+    vel_jogador = velocidade_navio(jogador)
+    if vel_inimigo <= 0:
+        print("Inimigo nao consegue se mover.")
+        return distancia
+
+    if distancia > 150 and vel_inimigo >= vel_jogador:
+        distancia = max(0, distancia - 50)
+        print("Inimigo se aproximou.")
+    elif distancia < 300 and vel_inimigo < vel_jogador:
+        distancia = min(350, distancia + 50)
+        print("Inimigo se afastou.")
+    else:
+        if random.random() < 0.5 and distancia > 75:
+            distancia = max(0, distancia - 40)
+            print("Inimigo ajustou a abordagem.")
+        else:
+            distancia = min(350, distancia + 40)
+            print("Inimigo tentou manter distancia.")
 
     return distancia
 
@@ -676,7 +979,7 @@ def iniciar_batalha(frota, tipo_inimigo=None, navio_inimigo=None):
         print(
             f"\n1. Atirar no casco ({min(3, jogador['recarga_casco'])}/3)"
             f"\n2. Atirar nas velas ({min(4, jogador['recarga_vela'])}/4)"
-            "\n3. Atirar na tripulacao"
+            f"\n3. Atirar na tripulacao ({min(2, jogador['recarga_mosquete'])}/2)"
             "\n4. Se aproximar"
             "\n5. Se afastar"
             "\n6. Tentar fugir"
@@ -689,23 +992,33 @@ def iniciar_batalha(frota, tipo_inimigo=None, navio_inimigo=None):
         ignorar_recarga_jogador = set()
 
         if acao == "1":
-            ataque_ok = atacar_casco(jogador, inimigo, distancia, "Voce")
-            if ataque_ok:
+            resultado = atacar_casco(jogador, inimigo, distancia, "Voce")
+            if resultado:
                 ignorar_recarga_jogador.add("recarga_casco")
                 acao_executada = True
-            consumiu_turno = True
+                consumiu_turno = True
+                if resultado.get("dano", 0) > 0:
+                    marcar_destacar(inimigo, ["casco"])
+                if resultado.get("perdas_canhao", 0) > 0:
+                    marcar_destacar(inimigo, ["canhoes"])
+                if resultado.get("perdas_tripulacao", 0) > 0:
+                    marcar_destacar(inimigo, ["tripulacao"])
         elif acao == "2":
-            ataque_ok = atacar_velas(jogador, inimigo, distancia, "Voce")
-            if ataque_ok:
+            resultado = atacar_velas(jogador, inimigo, distancia, "Voce")
+            if resultado:
                 ignorar_recarga_jogador.add("recarga_vela")
                 acao_executada = True
-            consumiu_turno = True
+                consumiu_turno = True
+                if resultado.get("dano", 0) > 0:
+                    marcar_destacar(inimigo, ["vela"])
         elif acao == "3":
-            ataque_ok = atacar_tripulacao(jogador, inimigo, distancia, "Voce")
-            if ataque_ok:
+            resultado = atacar_tripulacao(jogador, inimigo, distancia, "Voce")
+            if resultado:
                 ignorar_recarga_jogador.add("recarga_mosquete")
                 acao_executada = True
-            consumiu_turno = True
+                consumiu_turno = True
+                if resultado.get("dano", 0) > 0:
+                    marcar_destacar(inimigo, ["tripulacao"])
         elif acao == "4":
             if velocidade_navio(jogador) > 0 and distancia > 0:
                 distancia = max(0, distancia - 50)
@@ -864,11 +1177,40 @@ def navegar_pelos_mares(frota):
 
 
 def procurar_tesouro(frota):
-    ouro = random.randint(120, 480)
-    if frota.adicionar_item_carga("Ouro", ouro, 0):
-        print(f"Voce encontrou um tesouro com {ouro} de ouro.")
+    if frota.qnt_itens.get(MAPA_TESOURO, 0) <= 0:
+        print("Voce precisa de um Mapa do Tesouro para procurar. Tente conseguir um em batalhas ou no porto.")
+        pausar_e_limpar("\nPressione Enter para voltar ao menu...")
+        return
+
+    desafio = gerar_desafio_mapa_tesouro()
+    quantidade_etapas = desafio["quantidade_etapas"]
+    faixa_recompensa = desafio["faixa_recompensa"]
+    recompensa_final = desafio["recompensa_final"]
+    etapas = desafio["etapas"]
+
+    limpar_tela()
+    print("Voce abre o Mapa do Tesouro e ve marcas na costa.")
+    print(
+        f"Esse mapa tem {quantidade_etapas} etapas de charadas. "
+        f"Se resolver tudo, a recompensa fica entre {faixa_recompensa[0]} e {faixa_recompensa[1]} de ouro."
+    )
+    pausar_e_limpar("\nPressione Enter para comecar a decifrar...")
+
+    for indice_etapa, etapa in enumerate(etapas, start=1):
+        if not resolver_etapa_mapa_tesouro(indice_etapa, quantidade_etapas, etapa, faixa_recompensa):
+            return
+
+    if not frota.retirar_item_frota(MAPA_TESOURO, 1):
+        print("O mapa sumiu antes de ser usado.")
+        pausar_e_limpar("\nPressione Enter para voltar ao menu...")
+        return
+
+    if frota.adicionar_item_carga("Ouro", recompensa_final, 0):
+        print(f"Voce decifrou o mapa e encontrou um bau com {recompensa_final} de ouro.")
     else:
-        print("Voce encontrou um tesouro, mas nao conseguiu guardar.")
+        print("Voce encontrou o bau, mas nao havia espaco para guardar o ouro.")
+
+    pausar_e_limpar("\nPressione Enter para voltar ao menu...")
 
 
 def reparar_emergencia(frota):
@@ -965,10 +1307,10 @@ def menu_ilha(frota):
             idx_navio = escolher_navio(frota, permitir_cancelar=True)
             if idx_navio is None:
                 continue
-            itens_compra = ["Madeira", "Aco", "Pano", "Rum"]
+            itens_compra = gerar_itens_porto()
             print("0. Cancelar")
             for i, item in enumerate(itens_compra, start=1):
-                print(f"{i}. {item} ({PRECO_MATERIAIS[item]} ouro)")
+                print(f"{i}. {item} ({obter_preco_compra_item(item)} ouro)")
             escolha_item = ler_int("Escolha o item: ", 0, len(itens_compra))
             if escolha_item == 0:
                 continue
@@ -977,7 +1319,7 @@ def menu_ilha(frota):
             qtd = ler_int("Quantidade (0 para cancelar): ", 0)
             if qtd == 0:
                 continue
-            custo = PRECO_MATERIAIS[item] * qtd
+            custo = obter_preco_compra_item(item) * qtd
 
             if not frota.retirar_item_frota("Ouro", custo):
                 print("Ouro insuficiente.")
@@ -991,9 +1333,9 @@ def menu_ilha(frota):
             print(f"Compra concluida: {qtd} {item}.")
 
         elif opcao == "3":
-            itens_venda = ["Madeira", "Aco", "Pano", "Rum"]
+            itens_venda = [item for item in ITENS if item != "Ouro" and obter_preco_venda_item(item) > 0]
             for i, item in enumerate(itens_venda, start=1):
-                print(f"{i}. {item} ({PRECO_MATERIAIS[item] // 2} ouro por unidade)")
+                print(f"{i}. {item} ({obter_preco_venda_item(item)} ouro por unidade)")
             idx_item = ler_int("Escolha o item: ", 1, len(itens_venda)) - 1
             item = itens_venda[idx_item]
             qtd = ler_int("Quantidade: ", 1)
@@ -1002,7 +1344,7 @@ def menu_ilha(frota):
                 print("Quantidade insuficiente para venda.")
                 continue
 
-            ganho = (PRECO_MATERIAIS[item] // 2) * qtd
+            ganho = obter_preco_venda_item(item) * qtd
             frota.adicionar_item_carga("Ouro", ganho, 0)
             print(f"Venda concluida: +{ganho} ouro.")
 
@@ -1123,7 +1465,7 @@ def main():
         print(
             "\nOpcoes:\n"
             "1. Navegar pelos mares\n"
-            "2. Procurar por um tesouro\n"
+            "2. Procurar por um tesouro (requer mapa, 3 a 5 charadas)\n"
             "3. Mostrar estado atual\n"
             "4. Atracar em uma ilha\n"
             "5. Realizar reparos de emergencia\n"

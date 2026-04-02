@@ -18,4 +18,9 @@
     - Itens, equipamentos, melhorias tanto para o navio quanto o pirata;
     - Batalha de navios, destruindo ou abordando o inimigo de diferentes formas;
     - Duelo de espadas, combates em terra com escolhas variando entre furtividade e "tocar o puteiro".
-        
+
+Edit: Que porra eu tinha na cabeça escrevendo essas coisas kkkkkkkkkkk
+
+O Jogo é pra ser um sistema básico de ações de combate, exploração e estratégia, até o momento não tem um 1% concluído.
+
+Eu gostava de mexer com python, mas as partes críticas necessárias para fazer esse projeto eu não aprendi (classes e outras coisas), então apelei pro chat gpt, do qual é divertido fazer vibecoding.
